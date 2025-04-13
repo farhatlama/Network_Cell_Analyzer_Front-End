@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.loginapp.AboutLiveViewActivity">
+
+    <!-- Top App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:elevation="4dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#FFFFFF">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/menuIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_menu" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_weight="1"
+                    android:text="LIVE VIEW - ABOUT"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
+
+                <ImageView
+                    android:id="@+id/closeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_close" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#8DC8F8"
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="80dp">
+
+            <!-- Section 1: Brief Description -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_card"
+                android:clipToOutline="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Brief Description"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="The Live View screen shows you real-time details about your phone’s mobile network connection.\n\nIt automatically updates every 12 seconds to keep the data fresh and accurate."
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+
+            <!-- Section 2: What you can see -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/rounded_card"
+                android:clipToOutline="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="What you can see"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="4dp"
+                    android:text="• 𝗗𝗲𝘃𝗶𝗰𝗲 𝗜𝗗 – A unique number that identifies your phone.\n• 𝗠𝗔𝗖 𝗔𝗱𝗱𝗿𝗲𝘀𝘀 – Your device’s network address.\n• 𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝗢𝗽𝗲𝗿𝗮𝘁𝗼𝗿 – The mobile company you’re connected to (e.g., Alfa, Touch).\n• 𝗧𝗶𝗺𝗲 𝗦𝘁𝗮𝗺𝗽 – The exact time the data was last refreshed.\n• 𝗦𝗶𝗴𝗻𝗮𝗹 𝗤𝘂𝗮𝗹𝗶𝘁𝘆 (𝗦𝗜𝗡𝗥) – Tells you how strong and clear your signal is (higher = better).\n• 𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝗧𝘆𝗽𝗲 – Shows whether you’re connected to 2G, 3G, or 4G.\n• 𝗙𝗿𝗲𝗾𝘂𝗲𝗻𝗰𝘆 𝗕𝗮𝗻𝗱 – The radio frequency your network is using.\n• 𝗖𝗲𝗹𝗹 𝗜𝗗 – The ID of the cell tower your phone is connected to." />
+            </LinearLayout>
+
+            <!-- Section 3: No Internet -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@drawable/rounded_card"
+                android:clipToOutline="true">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No Internet?"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#000000"
+                    android:gravity="center" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:text="If your phone loses internet connection, you’ll see a “No Internet Connection” message.\n\nJust tap the Retry button to try reconnecting." />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom"
+        android:background="#FFFFFF"
+        app:menu="@menu/bottom_nav_menu" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+
+
+
+    <!--<?xml version="1.0" encoding="utf-8"?>
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".AboutLiveViewActivity">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFF"
+            android:elevation="4dp">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="#FFFFFF">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/menuIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_menu" />
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="24dp"
+                        android:layout_weight="1"
+                        android:text="LIVE VIEW - ABOUT"
+                        android:textColor="#000000"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:id="@+id/closeIcon"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="16dp"
+                        android:src="@drawable/ic_close" />
+                </LinearLayout>
+            </androidx.appcompat.widget.Toolbar>
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#8DC8F8"
+            android:padding="16dp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="80dp">
+
+                <!- Section 1: Brief Description
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:elevation="4dp"
+                    android:backgroundTint="#FFFFFF">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Brief Description"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:gravity="center_horizontal"
+                        android:textColor="#000000"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="The Live View screen shows you real-time details about your phone’s mobile network connection.\n\nIt automatically updates every 12 seconds to keep the data fresh and accurate."
+                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp"
+                        android:layout_marginTop="8dp" />
+                </LinearLayout>
+
+                <! Section 2: What you can see
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:backgroundTint="#FFFFFF"
+                    android:clipToOutline="true"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="What you can see"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:gravity="center_horizontal"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:lineSpacingExtra="4dp"
+                        android:text="• Device ID – A unique number that identifies your phone.\n
+    • MAC Address – Your device’s network address.\n
+    • Network Operator – The mobile company you’re connected to (e.g., Alfa, Touch).\n
+    • Time Stamp – The exact time the data was last refreshed.\n
+    • Signal Quality (SINR) – Tells you how strong and clear your signal is (higher = better).\n
+    • Network Type – Shows whether you’re connected to 2G, 3G, or 4G.\n
+    • Frequency Band – The radio frequency your network is using.\n
+    • Cell ID – The ID of the cell tower your phone is connected to." />
+                </LinearLayout>
+
+                <!- Section 3: No Internet
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    android:backgroundTint="#FFFFFF"
+                    android:background="@drawable/rounded_card">
+                    android:clipToOutline="true"/>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Internet?"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#000000"
+                        android:gravity="center_horizontal"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:textColor="#000000"
+                        android:textSize="14sp"
+                        android:text="If your phone loses internet connection, you’ll see a “No Internet Connection” message.\n\nJust tap the Retry button to try reconnecting." />
+                </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <!- Bottom Navigation -
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom"
+            android:background="#FFFFFF"
+            app:menu="@menu/bottom_nav_menu" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+            <!-<LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="80dp">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="The Live View screen shows you real-time details about your phone’s mobile network connection.Every 12 seconds, the screen updates automatically to keep the information fresh."
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+
+                 Add more content here
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom"
+            android:background="#FFFFFF"
+            app:elevation="8dp"
+            app:menu="@menu/bottom_nav_menu" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout  -->
