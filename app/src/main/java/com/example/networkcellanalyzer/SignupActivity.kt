@@ -8,6 +8,14 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.example.networkcellanalyzer.R
+import com.example.networkcellanalyzer.api.RetrofitClient
+import com.example.networkcellanalyzer.api.models.RegisterRequest
+import com.google.gson.Gson
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.ResponseBody
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -32,14 +40,12 @@ class SignUpActivity : AppCompatActivity() {
             val password = editTextPassword.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT)
+                    .show()
             } else {
-                // Dummy action: pretend we "created" the account
-                Toast.makeText(this, "Account created for $username", Toast.LENGTH_SHORT).show()
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
+                RegisterUser(username, password)
             }
+        }
          /*   else {
                 // Here you would typically register the user with your backend
                 Toast.makeText(this, "Account created successfully for: $username", Toast.LENGTH_SHORT).show()
@@ -49,7 +55,7 @@ class SignUpActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }*/
-        }
+
 
         textViewLogIn.setOnClickListener {
             // Navigate back to login screen
@@ -58,4 +64,49 @@ class SignUpActivity : AppCompatActivity() {
             finish()
         }
     }
+    private fun registerUser(username: String, password: String) {
+        progressBar.visibility = View.VISIBLE
+        buttonCreateAccount.isEnabled = false
+
+        val registerRequest = RegisterRequest(username, password)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = RetrofitClient.apiService.registerUser(registerRequest)
+
+                withContext(Dispatchers.Main) {
+                    progressBar.visibility = View.GONE
+                    buttonCreateAccount.isEnabled = true
+
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@SignUpActivity, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        // Parse error response
+                        val errorBody = response.errorBody()?.string()
+                        val errorMessage = try {
+                            val errorResponse = Gson().fromJson(errorBody, Map::class.java)
+                            errorResponse["error"] as? String ?: "Registration failed"
+                        } catch (e: Exception) {
+                            "Registration failed"
+                        }
+                        Toast.makeText(this@SignUpActivity, errorMessage, Toast.LENGTH_LONG).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+
+                    buttonCreateAccount.isEnabled = true
+                    Toast.makeText(
+                        this@SignUpActivity,
+                        "Network error: ${e.localizedMessage}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
+    }
+}
 }
