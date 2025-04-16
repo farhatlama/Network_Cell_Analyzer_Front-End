@@ -1,4 +1,4 @@
-package com.example.networkcellanalyzer.api
+package api
 
 import com.example.networkcellanalyzer.model.CellRecordSubmission
 import com.example.networkcellanalyzer.model.LoginRequest

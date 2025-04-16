@@ -9,7 +9,6 @@ import androidx.appcompat.widget.Toolbar
 import com.example.loginapp.AboutAppActivity
 import com.example.loginapp.AboutLiveViewActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import android.view.LayoutInflater
 import android.widget.ProgressBar
 import androidx.cardview.widget.CardView
 import java.text.SimpleDateFormat
@@ -18,6 +17,7 @@ import java.util.Locale
 import kotlin.random.Random
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import com.example.networkcellanalyzer.databinding.ActivityHomeBinding
@@ -27,11 +27,11 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-import com.example.networkcellanalyzer.api.ApiClient
+import utils.ApiClient
 import com.example.networkcellanalyzer.model.CellRecordSubmission
 import com.example.networkcellanalyzer.model.NetworkData
 import com.example.networkcellanalyzer.utils.SessionManager
-import kotlinx.coroutines.launch
+import utils.NetworkUtil
 import java.io.IOException
 import java.util.*
 
@@ -70,7 +70,7 @@ class HomeActivity : AppCompatActivity() {
 
     // for scheduling periodic refresh
     private val handler = Handler(Looper.getMainLooper())
-    private val refreshInterval = 12000L //refreshing every 12seconds, the 2 seconds are added as a safety margin
+    private val refreshInterval = 10000L //refreshing every 10seconda
     private var isRefreshScheduled = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -305,7 +305,8 @@ class HomeActivity : AppCompatActivity() {
                         }
                     }
                 } catch (e: Exception) {
-                    // Fallback to default value already in UI
+                    Log.e("API_ERROR", "Failed to fetch operator stats", e)
+
                 }
 
                 // Fetch signal power stats
@@ -336,7 +337,8 @@ class HomeActivity : AppCompatActivity() {
                         }
                     }
                 } catch (e: Exception) {
-                    // Fallback
+                    Log.e("API_ERROR", "Failed to fetch operator stats", e)
+
                 }
 
                 // Fetch SINR stats
@@ -353,10 +355,8 @@ class HomeActivity : AppCompatActivity() {
                         networkData.sinr = currentSinr
                     }
                 } catch (e: Exception) {
-                    // Use fallback - random value between 14.0 and 20.0
-                    val sinrValue = 17.0 + Random.nextDouble(3.0)
-                    sinrOutput.text = String.format("%.1f dB", sinrValue)
-                    networkData.sinr = sinrValue
+                    Log.e("API_ERROR", "Failed to fetch operator stats", e)
+
                 }
 
                 // Generate a cell ID if not already set
@@ -373,7 +373,8 @@ class HomeActivity : AppCompatActivity() {
                 submitNetworkData()
 
             } catch (e: IOException) {
-                null
+                Log.e("API_ERROR", "Failed to fetch operator stats", e)
+
             }
         }
     }
@@ -470,7 +471,7 @@ import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import com.example.networkcellanalyzer.databinding.ActivityHomeBinding
-import com.example.networkcellanalyzer.NetworkUtil
+import utils.NetworkUtil
 
 import androidx.lifecycle.lifecycleScope
 

@@ -1,6 +1,7 @@
 // app/src/main/java/com/example/networkcellanalyzer/api/ApiClient.kt
-package com.example.networkcellanalyzer.api
+package utils
 
+import api.ApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
