@@ -123,27 +123,44 @@ class AboutLiveViewActivity : AppCompatActivity() {
                 R.id.nav_permissions -> {
                     // Handle Permissions navigation
                     Toast.makeText(this, "Opening Permissions", Toast.LENGTH_SHORT).show()
+                    showPermissionsDialog()
+                    drawerLayout.closeDrawers()
+
                     true
                 }
+
                 R.id.nav_logout -> {
                     // Handle Log out action (log the user out and go to login screen)
                     sessionManager.clearSession() // Clear session data
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                     finish() // Finish current activity (go back to login)
+                    drawerLayout.closeDrawers()
                     true
                 }
+
                 else -> false
-            }.also {
-                drawerLayout.closeDrawers() // Close the drawer after selecting an item
             }
         }
+        }
 
-
-
-
-
+    private fun showPermissionsDialog() {
+        // Create a dialog to show app permissions and their reasons
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+        dialog.setTitle("Permissions Required")
+        dialog.setMessage(
+            "This app requires the following permissions:\n\n" +
+                    "1. Location: To detect the network cell and measure signal strength.\n" +
+                    "2. Phone State: To access your phone's status for proper network analysis.\n\n" +
+                    "We do not collect any personal data."
+        )
+        dialog.setPositiveButton("OK") { _, _ -> }
+        dialog.show()
     }
+
+
+
+
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.selectedItemId = R.id.navigation_radio
