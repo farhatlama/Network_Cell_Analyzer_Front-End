@@ -16,6 +16,9 @@ class SessionManager(private val context: Context) {
         const val DEVICE_ID = "device_id"
         const val MAC_ADDRESS = "mac_address"
         const val IP_ADDRESS = "ip_address"
+        const val CELL_ID = "cell_id"
+
+
     }
 
     init {
@@ -57,7 +60,7 @@ class SessionManager(private val context: Context) {
         return prefs.getString(DEVICE_ID, null)
     }
 
-    private fun saveMacAddress(macAddress: String) {
+    fun saveMacAddress(macAddress: String) {
         prefs.edit().putString(MAC_ADDRESS, macAddress).apply()
     }
 
@@ -73,7 +76,13 @@ class SessionManager(private val context: Context) {
         return prefs.getString(IP_ADDRESS, null)
     }
 
-    // ─── Clear All ───────────────────────────────
+    fun saveCellId(cellId: String) {
+        prefs.edit().putString(CELL_ID, cellId).apply()
+    }
+
+    fun getCellId(): String? {
+        return prefs.getString(CELL_ID, null)
+    }    // ─── Clear All ───────────────────────────────
     fun clearSession() {
         prefs.edit().clear().apply()
     }

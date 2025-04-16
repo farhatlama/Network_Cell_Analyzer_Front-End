@@ -1,7 +1,17 @@
 package utils
 
+import android.Manifest
 import android.content.Context
+import android.os.Build
 import android.provider.Settings
+import android.telephony.CellIdentityNr
+import android.telephony.CellInfo
+import android.telephony.CellInfoGsm
+import android.telephony.CellInfoLte
+import android.telephony.CellInfoNr
+import android.telephony.CellInfoWcdma
+import android.telephony.TelephonyManager
+import androidx.annotation.RequiresPermission
 import java.net.Inet4Address
 import java.net.NetworkInterface
 
@@ -48,4 +58,34 @@ object DeviceInfoUtil {
             ""
         }
     }
+
+    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    fun getCellId(context: Context): Int {
+        try {
+            val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+            val cellInfoList = telephonyManager.allCellInfo
+            val cellInfo: CellInfo? = cellInfoList?.firstOrNull()
+
+            return when (cellInfo) {
+                is CellInfoLte -> cellInfo.cellIdentity.ci
+                is CellInfoGsm -> cellInfo.cellIdentity.cid
+                is CellInfoWcdma -> cellInfo.cellIdentity.cid
+                else -> {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && cellInfo is CellInfoNr) {
+                        val nrCell = cellInfo.cellIdentity as? CellIdentityNr
+                        return nrCell?.nci?.toInt() ?: -1
+                    } else {
+                        return -1
+                    }
+                }
+
+            }
+
+
+
+        } catch (e: Exception) {
+            return -1 // fallback if permission denied or error occurs
+        }
+    }
+
 }

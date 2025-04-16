@@ -1,19 +1,24 @@
 package com.example.loginapp
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import com.example.networkcellanalyzer.R
 import utils.ApiClient
 import com.example.networkcellanalyzer.model.LoginRequest
 import com.example.networkcellanalyzer.utils.SessionManager
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
+import utils.DeviceInfoUtil
 import java.io.IOException
+import android.Manifest
+
 
 class LoginActivity : AppCompatActivity() {
 
@@ -22,6 +27,10 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var buttonLogin: Button
     private lateinit var textViewSignIn: TextView
     private lateinit var sessionManager: SessionManager
+
+    companion object {
+        private const val REQUEST_PERMISSIONS = 1001
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +79,34 @@ class LoginActivity : AppCompatActivity() {
                     sessionManager.saveAuthToken(response.body()!!.token)
                     sessionManager.saveUsername(username)
 
+                    // Immediately assign Device ID and MAC
+                    val deviceId = DeviceInfoUtil.getDeviceId(this@LoginActivity)
+                    val macAddress = DeviceInfoUtil.getMacAddress()
+                    sessionManager.saveDeviceId(deviceId)
+                    sessionManager.saveMacAddress(macAddress)
+
+                    // Request permissions if not already granted
+                    if (ActivityCompat.checkSelfPermission(
+                            this@LoginActivity,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED ||
+                        ActivityCompat.checkSelfPermission(
+                            this@LoginActivity,
+                            Manifest.permission.READ_PHONE_STATE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        ActivityCompat.requestPermissions(
+                            this@LoginActivity,
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.READ_PHONE_STATE
+                            ),
+                            REQUEST_PERMISSIONS
+                        )
+                    } else {
+                        assignRealCellId()
+                    }
+
                     Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
                     navigateToWelcome()
                 } else {
@@ -101,6 +138,23 @@ class LoginActivity : AppCompatActivity() {
         val intent = Intent(this, WelcomeActivity::class.java)
         startActivity(intent)
         finish()
+    }
+    private fun assignRealCellId() {
+        val realCellId = DeviceInfoUtil.getCellId(this)
+        sessionManager.saveCellId(realCellId.toString())
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_PERMISSIONS && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+            assignRealCellId()
+        } else {
+            Toast.makeText(this, "Permissions denied. Cannot retrieve real cell ID.", Toast.LENGTH_SHORT).show()
+        }
     }
 }
 
