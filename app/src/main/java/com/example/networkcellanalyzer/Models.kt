@@ -29,12 +29,14 @@ data class CellRecordSubmission(
 )
 
 data class NetworkData(
-    val deviceId: String,
-    val macAddress: String,
+    var deviceId: String,
+    var macAddress: String,
     var operator: String,
-    val timestamp: String,
+    var timestamp: String,
     var sinr: Double,
     var networkType: String,
     var frequencyBand: String,
-    var cellId: String
+    var cellId: String,
+    var signalPower: Double
+
 )

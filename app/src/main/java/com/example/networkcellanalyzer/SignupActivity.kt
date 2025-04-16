@@ -18,6 +18,8 @@ import kotlinx.coroutines.launch
 import com.google.gson.Gson
 import java.io.IOException
 
+
+
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var editTextUsername: EditText
@@ -65,10 +67,11 @@ class SignUpActivity : AppCompatActivity() {
         // Using LoginRequest for registration since the API accepts the same structure
         val request = LoginRequest(username, password)
 
+        val signupRequest = SignupRequest(username = username, password = password)
         lifecycleScope.launch {
             try {
                 // Call register endpoint with the same request type
-                val response = ApiClient.apiService.signup(SignupRequest)
+                val response = ApiClient.apiService.signup(signupRequest)
 
                 progressBar.visibility = View.GONE
                 buttonCreateAccount.isEnabled = true

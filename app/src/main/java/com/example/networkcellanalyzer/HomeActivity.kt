@@ -31,6 +31,7 @@ import utils.ApiClient
 import com.example.networkcellanalyzer.model.CellRecordSubmission
 import com.example.networkcellanalyzer.model.NetworkData
 import com.example.networkcellanalyzer.utils.SessionManager
+import utils.DeviceInfoUtil
 import utils.NetworkUtil
 import java.io.IOException
 import java.util.*
@@ -57,7 +58,8 @@ class HomeActivity : AppCompatActivity() {
         sinr = 0.0,
         networkType = "unknown",
         frequencyBand = "unknown",
-        cellId = "unknown"
+        cellId = "unknown",
+        signalPower = 0.0
     )
 
     // to refresh
@@ -119,6 +121,7 @@ class HomeActivity : AppCompatActivity() {
         // Set up periodic connectivity checks
         startPeriodicConnectivityChecks()
 
+        sessionManager = SessionManager(this)
         // Load initial data if connected
         if (NetworkUtil.isInternetAvailable(this)) {
             loadDeviceData()
@@ -253,6 +256,24 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun loadDeviceData() {
+        val deviceId = sessionManager.getDeviceId() ?: DeviceInfoUtil.getDeviceId(this)
+        val macAddress = sessionManager.getMacAddress() ?: DeviceInfoUtil.getMacAddress()
+        val ipAddress = sessionManager.getIpAddress() ?: DeviceInfoUtil.getIPAddress()
+
+        deviceIdOutput.text = deviceId
+        macAddressOutput.text = macAddress
+        timeStampOutput.text = getCurrentTimestamp()
+
+        networkData.deviceId = deviceId
+        networkData.macAddress = macAddress
+        networkData.timestamp = getCurrentTimestamp()
+
+        Log.d("DeviceInfo", "Device ID: $deviceId, MAC: $macAddress, IP: $ipAddress")
+
+
+
+
+/*
         if (!::sessionManager.isInitialized) {
             sessionManager = SessionManager(this)
         }
@@ -271,7 +292,7 @@ class HomeActivity : AppCompatActivity() {
         deviceIdOutput.text = deviceId
         macAddressOutput.text = macAddress
         timeStampOutput.text = getCurrentTimestamp()
-
+*/
         // Try to fetch data from API
         lifecycleScope.launch {
             try {
@@ -325,6 +346,8 @@ class HomeActivity : AppCompatActivity() {
                         bestNetwork?.let {
                             networkTypeOutput.text = it.key
                             networkData.networkType = it.key
+                            networkData.signalPower = it.value
+
 
                             // Update frequency band based on network type
                             frequencyBandOutput.text = when(it.key) {
@@ -360,14 +383,14 @@ class HomeActivity : AppCompatActivity() {
                 }
 
                 // Generate a cell ID if not already set
-                if (networkData.cellId == "unknown") {
+           /*     if (networkData.cellId == "unknown") {
                     val cellIdBase = 12349800
                     val cellIdRandom = cellIdBase + Random.nextInt(200)
                     cellIdOutput.text = cellIdRandom.toString()
                     networkData.cellId = cellIdRandom.toString()
                 } else {
-                    cellIdOutput.text = networkData.cellId
-                }
+                 */   cellIdOutput.text = networkData.cellId
+
 
                 // Submit the current reading to the backend
                 submitNetworkData()
@@ -378,25 +401,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
-    private fun getMacAddress(): String? {
-        try {
-            val networkInterfaces = java.net.NetworkInterface.getNetworkInterfaces()
-            while (networkInterfaces.hasMoreElements()) {
-                val networkInterface = networkInterfaces.nextElement()
-                val mac = networkInterface.hardwareAddress
-                if (mac != null && mac.isNotEmpty()) {
-                    val sb = StringBuilder()
-                    for (i in mac.indices) {
-                        sb.append(String.format("%02X%s", mac[i], if (i < mac.size - 1) ":" else ""))
-                    }
-                    return sb.toString()
-                }
-            }
-        } catch (e: Exception) {
-            // Ignore
-        }
-        return null
-    }
+
 
 
     private fun submitNetworkData() {
@@ -407,7 +412,7 @@ class HomeActivity : AppCompatActivity() {
                 // Create submission object
                 val submission = CellRecordSubmission(
                     operator = networkData.operator,
-                    signal_power = -65.0 + Random.nextDouble(10.0), // Estimated from SINR
+                    signal_power = networkData.signalPower,
                     sinr = networkData.sinr,
                     network_type = networkData.networkType,
                     frequency_band = networkData.frequencyBand,
