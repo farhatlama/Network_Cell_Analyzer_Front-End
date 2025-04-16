@@ -8,14 +8,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
+
 
     <application
         android:allowBackup="true"
@@ -26,7 +19,7 @@
         android:theme="@style/Theme.NetworkCellAnalyzer">
 
 
-        <!-- Splash Screen Activity as launcher -->
+        <!-- Splash Screen as launcher -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -37,23 +30,24 @@
             </intent-filter>
         </activity>
 
-        <!-- Login Activity -->
+
         <activity
             android:name="com.example.loginapp.LoginActivity"
             android:exported="false" />
         <activity
             android:name="com.example.loginapp.SignUpActivity"
             android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false"
-            android:theme="@style/Theme.LoginApp.NoActionBar" />
-
 
         <activity
             android:name="com.example.loginapp.WelcomeActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".HomeActivity"
+            android:exported="false"
+            android:theme="@style/Theme.LoginApp.NoActionBar" />
+
+<!-- infos -->
         <activity
             android:name="com.example.loginapp.AboutAppActivity"
             android:theme="@style/Theme.LoginApp.NoActionBar" />
@@ -61,6 +55,20 @@
             android:name="com.example.loginapp.AboutLiveViewActivity"
             android:theme="@style/Theme.LoginApp.NoActionBar" />
 
+        <activity
+            android:name=".NavigationActivity"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.LoginApp.NoActionBar">
+
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>
 <!--
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
@@ -90,10 +98,3 @@
        <activity android:name="com.example.loginapp.SignUpActivity" />
 -->
 
-     <activity
-           android:name=".MainActivity"
-           android:exported="false" />
-
-    </application>
-
-</manifest>

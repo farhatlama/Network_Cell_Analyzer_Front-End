@@ -13,9 +13,13 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
     </style>
 
-    <!-- Theme without ActionBar -->
     <style name="Theme.LoginApp.NoActionBar">
+    <!-- Theme without ActionBar -->
+
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
+
+
     </style>
 </resources>
