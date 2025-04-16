@@ -79,7 +79,8 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        sessionManager = SessionManager(this)
+        setupBottomNavigation()
         // Set up the toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -112,8 +113,7 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        // Setup bottom navigation
-        setupBottomNavigation()
+
 
         // Initial check for internet connection
         checkConnectionAndUpdateUI()
@@ -126,6 +126,36 @@ class HomeActivity : AppCompatActivity() {
         if (NetworkUtil.isInternetAvailable(this)) {
             loadDeviceData()
             startPeriodicRefresh()
+        }
+
+
+
+    }
+    private fun setupBottomNavigation() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
+        // Highlight the active icon
+        bottomNavigationView.selectedItemId = R.id.navigation_square
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_radio -> {
+                   /* val intent = Intent(this, AboutLiveViewActivity::class.java)
+                    startActivity(intent)
+                    finish()*/
+                    true
+                }
+                R.id.navigation_square -> {
+                    // Already on this page, do nothing
+                    true
+                }
+                R.id.navigation_help -> {
+                    val intent = Intent(this, AboutAppActivity::class.java)
+                    startActivity(intent)
+                    true
+                }
+                else -> false
+            }
         }
     }
 
@@ -154,28 +184,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupBottomNavigation() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.setOnItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_radio -> {
-                    // Handle radio button click
-                    true
-                }
-                R.id.navigation_square -> {
-                    // Handle square button click
-                    true
-                }
-                R.id.navigation_help -> {
-                    // Navigate to About App screen when clicking the bottom ? button
-                    val intent = Intent(this, AboutAppActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
-                else -> false
-            }
-        }
-    }
+
 
     private fun startPeriodicRefresh() {
         if (isRefreshScheduled) return // avoid rescheduling

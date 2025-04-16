@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 import utils.DeviceInfoUtil
 import java.io.IOException
 import android.Manifest
+import androidx.appcompat.app.AlertDialog
 
 
 class LoginActivity : AppCompatActivity() {
@@ -140,8 +141,15 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
     private fun assignRealCellId() {
-        val realCellId = DeviceInfoUtil.getCellId(this)
-        sessionManager.saveCellId(realCellId.toString())
+        if (
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+        ) {
+            val realCellId = DeviceInfoUtil.getCellId(this)
+            sessionManager.saveCellId(realCellId.toString())
+        } else {
+            Toast.makeText(this, "Permission denied: Cannot access Cell ID", Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -150,13 +158,34 @@ class LoginActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_PERMISSIONS && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+        if (requestCode == REQUEST_PERMISSIONS && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) { //permission granted, continue
             assignRealCellId()
-        } else {
-            Toast.makeText(this, "Permissions denied. Cannot retrieve real cell ID.", Toast.LENGTH_SHORT).show()
-        }
+            navigateToWelcome()
+        } else  // One or more permissions denied
+            AlertDialog.Builder(this)
+                .setTitle("Permissions Required")
+                .setMessage(
+                    "Unfortunately, these permissions are essential for the app to function correctly.\n\n" +
+                            "Please allow access to your location and phone state."
+                )
+                .setCancelable(false)
+                .setPositiveButton("Try Again") { _, _ ->
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.READ_PHONE_STATE
+                        ),
+                        REQUEST_PERMISSIONS
+                    )
+                }
+                .setNegativeButton("Exit App") { _, _ ->
+                    finish()
+                }
+                .show()
     }
-}
+    }
+
 
 /*package com.example.loginapp
 
