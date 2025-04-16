@@ -1,5 +1,31 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">NetworkCellAnalyzer</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-</resources>
+
+    <string name="app_description" tools:ignore="StringEscaping">
+        Network Cell Analyzer is an Android application designed to monitor and analyze the mobile network
+        performance in real-time. It empowers users with detailed insights into their current network conditions, such as signal strength, network type, and operator stats. The app provides essential data for troubleshooting network issues and optimizing network usage, especially in areas with weak signals.
+    </string>
+    <string name="how_to_use">
+        1. Launch the App: Open the app, and it will automatically start monitoring your network connection.
+        - Device ID: Unique identifier for your device.
+        - SINR: Signal-to-Interference-plus-Noise Ratio.
+        - Signal Strength: Measures the strength of the network signal.
+        - Network Type: Displays the type of network (2G, 3G, 4G).
+        - Operator Stats: Information about your operator’s performance.
+
+        2. Refresh Data: The data updates every 10 seconds, or you can refresh it manually.
+
+        3. Use Menu: Access additional features through the navigation drawer.
+
+        4. Help &amp; Support: Tap the Help icon for more information.
+    </string>
+    <string name="app_features">
+        - Real-time Network Data: Monitor SINR (Signal-to-Interference-plus-Noise Ratio), signal strength, and other network parameters.
+        - Periodic Data Refresh: Automatically refresh the data every 10 seconds to give you up-to-date information.
+        - User-Friendly Interface: View all the network data in an intuitive and easy-to-understand layout.
+        - Operator and Network Type: See the operator stats and identify the best-performing network types, such as 2G, 3G, or 4G.
+    </string>
+    </resources>
+

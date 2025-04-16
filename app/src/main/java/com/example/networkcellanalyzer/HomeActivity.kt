@@ -81,6 +81,7 @@ class HomeActivity : AppCompatActivity() {
     private val refreshInterval = 10000L //refreshing every 10seconda
     private var isRefreshScheduled = false
 
+    // For Navigation Drawer
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
 
@@ -88,10 +89,24 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         sessionManager = SessionManager(this)
         setupBottomNavigation()
+
         // Set up the toolbar
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
+        toggle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
 
 
         setSupportActionBar(toolbar)
@@ -101,28 +116,9 @@ class HomeActivity : AppCompatActivity() {
         setupNoConnectionView()
 
 
-        drawerLayout = findViewById(R.id.drawer_layout)
-        toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar,
-            R.string.navigation_drawer_open, // String for the open drawer description
-            R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
 
 
-
-        setSupportActionBar(toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true) // Show the "Up" button (menu)
-
-
-        val menuIcon = findViewById<ImageView>(R.id.menuIcon)
-
-        menuIcon.setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START) // Open the drawer when the menu icon is clicked
-        }
-
-                    // Initialize views
+        // Initialize views
         deviceIdOutput = findViewById(R.id.deviceIdOutput)
         macAddressOutput = findViewById(R.id.macAddressOutput)
         operatorOutput = findViewById(R.id.operatorOutput)
@@ -138,6 +134,9 @@ class HomeActivity : AppCompatActivity() {
 
         // Hide the refresh overlay initially
         refreshOverlay.visibility = View.GONE
+
+
+        setupNavigationDrawer()
 
         val helpIcon = findViewById<ImageView>(R.id.helpIcon)
         helpIcon.setOnClickListener {
@@ -221,61 +220,6 @@ class HomeActivity : AppCompatActivity() {
 
 
 
-    private fun setupNavigationDrawer() {
-        val sessionManager = SessionManager(this)
-        val menuIcon = findViewById<ImageView>(R.id.menuIcon)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        toggle = ActionBarDrawerToggle(
-            this, drawerLayout, toolbar,
-            R.string.navigation_drawer_open,
-            R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        val navView = findViewById<NavigationView>(R.id.nav_view)
-        navView.setNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.nav_permissions -> {
-                    // Handle Permissions navigation
-                    Toast.makeText(this, "Opening Permissions", Toast.LENGTH_SHORT).show()
-                    showPermissionsDialog()
-                    drawerLayout.closeDrawers()
-                    true
-                }
-
-                R.id.nav_logout -> {
-                    // Handle Log out action (log the user out and go to login screen)
-                    sessionManager.clearSession() // Clear session data
-                    val intent = Intent(this, LoginActivity::class.java)
-                    startActivity(intent)
-                    finish() // Finish current activity (go back to login)
-                    drawerLayout.closeDrawers()
-                    true
-                }
-
-                else -> false
-            }
-        }
-
-    }
-
-    private fun showPermissionsDialog() {
-        // Create a dialog to show app permissions and their reasons
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
-        dialog.setTitle("Permissions Required")
-        dialog.setMessage(
-            "This app requires the following permissions:\n\n" +
-                    "1. Location: To detect the network cell and measure signal strength.\n" +
-                    "2. Phone State: To access your phone's status for proper network analysis.\n\n" +
-                    "We do not collect any personal data."
-        )
-        dialog.setPositiveButton("OK") { _, _ -> }
-        dialog.show()
-    }
-
-
-
 
     private fun startPeriodicRefresh() {
         if (isRefreshScheduled) return // avoid rescheduling
@@ -354,7 +298,55 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
+    private fun setupNavigationDrawer() {
+        val sessionManager = SessionManager(this)
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        toggle = ActionBarDrawerToggle(
+            this, drawerLayout, toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
 
+
+        val navView = findViewById<NavigationView>(R.id.nav_view)
+        navView.setNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_permissions -> {
+                    // Handle Permissions navigation
+                    Toast.makeText(this, "Opening Permissions", Toast.LENGTH_SHORT).show()
+                    showPermissionsDialog()
+                    drawerLayout.closeDrawers()
+                    true
+                }
+
+                R.id.nav_logout -> {
+                    // Handle Log out action (log the user out and go to login screen)
+                    sessionManager.clearSession() // Clear session data
+                    val intent = Intent(this, LoginActivity::class.java)
+                    startActivity(intent)
+                    finish() // Finish current activity (go back to login)
+                    drawerLayout.closeDrawers()
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    private fun showPermissionsDialog() {
+        // Create a dialog to show app permissions and their reasons
+        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+        dialog.setTitle("Permissions Required")
+        dialog.setMessage(
+            "This app requires the following permissions:\n\n" +
+                    "1. Location: To detect the network cell and measure signal strength.\n" +
+                    "2. Phone State: To access your phone's status for proper network analysis.\n\n" +
+                    "We do not collect any personal data."
+        )
+        dialog.setPositiveButton("OK") { _, _ -> }
+        dialog.show()
+    }
     private fun loadDeviceData() {
         val deviceId = sessionManager.getDeviceId() ?: DeviceInfoUtil.getDeviceId(this)
         val macAddress = sessionManager.getMacAddress() ?: DeviceInfoUtil.getMacAddress()
@@ -549,6 +541,25 @@ class HomeActivity : AppCompatActivity() {
         checkConnectionAndUpdateUI()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
