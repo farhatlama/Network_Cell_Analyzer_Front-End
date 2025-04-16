@@ -1,17 +1,16 @@
-package com.example.loginapp
+package com.example.networkcellanalyzer
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import android.text.Html
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.networkcellanalyzer.R
+import com.example.loginapp.HomeActivity
+import com.example.loginapp.LoginActivity
 import com.example.networkcellanalyzer.databinding.ActivityHomeBinding
 import com.example.networkcellanalyzer.utils.SessionManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -123,7 +122,7 @@ class AboutAppActivity : AppCompatActivity() {
 
     private fun showPermissionsDialog() {
         // Create a dialog to show app permissions and their reasons
-        val dialog = androidx.appcompat.app.AlertDialog.Builder(this)
+        val dialog = AlertDialog.Builder(this)
         dialog.setTitle("Permissions Required")
         dialog.setMessage(
             "This app requires the following permissions:\n\n" +

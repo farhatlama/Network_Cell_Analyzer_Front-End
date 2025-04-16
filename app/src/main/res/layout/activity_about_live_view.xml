@@ -4,194 +4,204 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".AboutAppActivity">
+    android:fitsSystemWindows="true"
+    tools:context=".AboutLiveViewActivity">
 
-    <!-- Fixed Top Toolbar -->
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <!-- Main Content Container -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#FFFFFF"
-        android:elevation="4dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <!-- Fixed Top Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_height="?attr/actionBarSize"
+            android:background="#FFFFFF"
+            android:elevation="4dp">
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="24dp"
-                android:layout_weight="1"
-                android:text="About Live View"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/closeIcon"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_close" />
-        </LinearLayout>
-    </androidx.appcompat.widget.Toolbar>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
+                    android:layout_weight="1"
+                    android:text="About Live View"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-    <!-- Scrollable Content takes all remaining space -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
+                <ImageView
+                    android:id="@+id/closeIcon"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_close" />
+            </LinearLayout>
+        </androidx.appcompat.widget.Toolbar>
 
-        <LinearLayout
+        <!-- Scrollable Content takes all remaining space -->
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true">
 
-            <!-- App Title -->
-            <TextView
-                android:id="@+id/title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="16dp"
-                android:text="Brief Description"
-                android:textColor="@android:color/black"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <!-- App Description - Split into individual lines -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="The Live View screen shows you real-time details about your phone's mobile network connection.\n\nIt automatically updates every 12 seconds to keep the data fresh and accurate."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="8dp" />
+                <!-- App Title -->
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="16dp"
+                    android:text="Brief Description"
+                    android:textColor="@android:color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <!-- App Description - Split into individual lines -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="The Live View screen shows you real-time details about your phone's mobile network connection.\n\nIt automatically updates every 12 seconds to keep the data fresh and accurate."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
 
 
-            <!-- Key Features Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:text="Displayed Information"
-                android:textColor="@android:color/black"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                <!-- Key Features Section -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="Displayed Information"
+                    android:textColor="@android:color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-            <!-- Features as separate text views with line breaks -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• 𝗗𝗲𝘃𝗶𝗰𝗲 𝗜𝗗 – A unique number that identifies your device."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="8dp" />
+                <!-- Features as separate text views with line breaks -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗗𝗲𝘃𝗶𝗰𝗲 𝗜𝗗 – A unique number that identifies your device."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• 𝗠𝗔𝗖 𝗔𝗱𝗱𝗿𝗲𝘀𝘀 – Your device's network address."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="8dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗠𝗔𝗖 𝗔𝗱𝗱𝗿𝗲𝘀𝘀 – Your device's network address."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• Network type identification (2G, 3G, 4G, 5G)."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="8dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝘁𝘆𝗽𝗲 𝗶𝗱𝗲𝗻𝘁𝗶𝗳𝗶𝗰𝗮𝘁𝗶𝗼𝗻 (2G, 3G, 4G, 5G)."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• N𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝗢𝗽𝗲𝗿𝗮𝘁𝗼𝗿 – The mobile company you're connected to (e.g., Alfa, Touch)."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="8dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝗢𝗽𝗲𝗿𝗮𝘁𝗼𝗿 – The mobile company you're connected to (e.g., Alfa, Touch)."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• 𝗧𝗶𝗺𝗲 𝗦𝘁𝗮𝗺𝗽 – The exact time the data was last refreshed."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="16dp" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="𝗦𝗶𝗴𝗻𝗮𝗹 𝗤𝘂𝗮𝗹𝗶𝘁𝘆 (𝗦𝗜𝗡𝗥) – Tells you how strong and clear your signal is (higher = better)."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="16dp" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• 𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝗧𝘆𝗽𝗲 – Shows whether you're connected to 2G, 3G, or 4G."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="16dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗧𝗶𝗺𝗲 𝗦𝘁𝗮𝗺𝗽 – The exact time the data was last refreshed."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="16dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="𝗦𝗶𝗴𝗻𝗮𝗹 𝗤𝘂𝗮𝗹𝗶𝘁𝘆 (𝗦𝗜𝗡𝗥) – Tells you how strong and clear your signal is (higher = better)."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="16dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗡𝗲𝘁𝘄𝗼𝗿𝗸 𝗧𝘆𝗽𝗲 – Shows whether you're connected to 2G, 3G, or 4G."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="16dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• 𝗙𝗿𝗲𝗾𝘂𝗲𝗻𝗰𝘆 𝗕𝗮𝗻𝗱 – The radio frequency your network is using"
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="16dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗙𝗿𝗲𝗾𝘂𝗲𝗻𝗰𝘆 𝗕𝗮𝗻𝗱 – The radio frequency your network is using"
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="16dp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="• 𝗖𝗲𝗹𝗹 𝗜𝗗 – The ID of the cell tower your phone is connected to."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="16dp" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="• 𝗖𝗲𝗹𝗹 𝗜𝗗 – The ID of the cell tower your phone is connected to."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="16dp" />
 
-            <!-- No Internet -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="8dp"
-                android:text="No Internet"
-                android:textColor="@android:color/black"
-                android:textSize="22sp"
-                android:textStyle="bold" />
+                <!-- No Internet -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:text="No Internet"
+                    android:textColor="@android:color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
 
-            <!-- How to use as separate text views with line breaks -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="If the internet connection is lost, a 'No Internet Connection' message will appear. Simply tap 'Retry' to reconnect."
-                android:textColor="@android:color/black"
-                android:textSize="16sp"
-                android:paddingBottom="8dp" />
+                <!-- How to use as separate text views with line breaks -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="If the internet connection is lost, a 'No Internet Connection' message will appear. Simply tap 'Retry' to reconnect."
+                    android:textColor="@android:color/black"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp" />
 
-        </LinearLayout>
-    </ScrollView>
+            </LinearLayout>
+        </ScrollView>
 
-    <!-- Fixed Bottom Navigation -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#FFFFFF"
-        android:elevation="8dp"
-        app:menu="@menu/bottom_nav_menu" />
+        <!-- Fixed Bottom Navigation -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigationView"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#FFFFFF"
+            android:elevation="8dp"
+            app:menu="@menu/bottom_nav_menu" />
+    </LinearLayout>
 
-</LinearLayout>
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_menu" />
+
 </androidx.drawerlayout.widget.DrawerLayout>

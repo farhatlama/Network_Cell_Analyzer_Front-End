@@ -6,15 +6,12 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
-import com.example.loginapp.AboutAppActivity
-import com.example.loginapp.AboutLiveViewActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.widget.ProgressBar
 import androidx.cardview.widget.CardView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-import kotlin.random.Random
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -30,7 +27,6 @@ import com.example.loginapp.LoginActivity
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.core.view.GravityCompat
 
 import utils.ApiClient
 import com.example.networkcellanalyzer.model.CellRecordSubmission

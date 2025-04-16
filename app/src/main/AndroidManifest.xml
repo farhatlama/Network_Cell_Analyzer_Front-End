@@ -49,10 +49,10 @@
 
 <!-- infos -->
         <activity
-            android:name="com.example.loginapp.AboutAppActivity"
+            android:name=".AboutAppActivity"
             android:theme="@style/Theme.LoginApp.NoActionBar" />
         <activity
-            android:name="com.example.loginapp.AboutLiveViewActivity"
+            android:name=".AboutLiveViewActivity"
             android:theme="@style/Theme.LoginApp.NoActionBar" />
 
         <activity
