@@ -80,11 +80,13 @@ class LoginActivity : AppCompatActivity() {
                     sessionManager.saveAuthToken(response.body()!!.token)
                     sessionManager.saveUsername(username)
 
-                    // Immediately assign Device ID and MAC
-                    val deviceId = DeviceInfoUtil.getDeviceId(this@LoginActivity)
-                    val macAddress = DeviceInfoUtil.getMacAddress()
-                    sessionManager.saveDeviceId(deviceId)
-                    sessionManager.saveMacAddress(macAddress)
+                    // Retrieve the DeviceID (it should always be the same)
+                    var deviceId = sessionManager.getDeviceId()
+                    if (deviceId == null) {
+                        // DeviceID should never be null if it's already saved, so this block should ideally never execute
+                        deviceId = DeviceInfoUtil.getDeviceId(this@LoginActivity)
+                        sessionManager.saveDeviceId(deviceId) // Save DeviceID in SessionManager
+                    }
 
                     // Request permissions if not already granted
                     if (ActivityCompat.checkSelfPermission(

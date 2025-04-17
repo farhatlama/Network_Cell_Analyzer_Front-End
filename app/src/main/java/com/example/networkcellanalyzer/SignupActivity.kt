@@ -14,8 +14,10 @@ import utils.ApiClient
 import com.example.networkcellanalyzer.model.LoginRequest
 import androidx.lifecycle.lifecycleScope
 import com.example.networkcellanalyzer.model.SignupRequest
+import com.example.networkcellanalyzer.utils.SessionManager
 import kotlinx.coroutines.launch
 import com.google.gson.Gson
+import utils.DeviceInfoUtil
 import java.io.IOException
 
 
@@ -68,15 +70,27 @@ class SignUpActivity : AppCompatActivity() {
         val request = LoginRequest(username, password)
 
         val signupRequest = SignupRequest(username = username, password = password)
+        val sessionManager = SessionManager(this@SignUpActivity)
+
         lifecycleScope.launch {
             try {
                 // Call register endpoint with the same request type
                 val response = ApiClient.apiService.signup(signupRequest)
 
+
+
                 progressBar.visibility = View.GONE
                 buttonCreateAccount.isEnabled = true
 
                 if (response.isSuccessful) {
+                    // Only save the DeviceID the first time the user registers
+
+                    var deviceId = sessionManager.getDeviceId()
+                    if (deviceId == null) {
+                        deviceId = DeviceInfoUtil.getDeviceId(this@SignUpActivity) // Fetch DeviceID
+                        sessionManager.saveDeviceId(deviceId) // Save it in SessionManager
+                    }
+
                     Toast.makeText(this@SignUpActivity, "Account created successfully!", Toast.LENGTH_SHORT).show()
                     val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
                     startActivity(intent)

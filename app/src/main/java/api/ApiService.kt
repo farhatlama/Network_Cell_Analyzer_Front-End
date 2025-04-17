@@ -12,7 +12,7 @@ interface ApiService {
     @POST("login")
     suspend fun login(@Body loginRequest: LoginRequest): Response<LoginResponse>
 
-    @POST("signup")
+    @POST("register")
     suspend fun signup(@Body signupRequest: SignupRequest): Response<LoginResponse>
 
     // Data Submission
@@ -22,36 +22,5 @@ interface ApiService {
         @Header("Authorization") token: String
     ): Response<Map<String, Any>>
 
-    // Stats
-    @GET("stats/operator")
-    suspend fun getOperatorStats(
-        @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String,
-        @Query("device_id") deviceId: String,
-        @Header("Authorization") token: String
-    ): Response<Map<String, String>>
 
-    @GET("stats/network_type")
-    suspend fun getNetworkTypeStats(
-        @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String,
-        @Query("device_id") deviceId: String,
-        @Header("Authorization") token: String
-    ): Response<Map<String, String>>
-
-    @GET("stats/signal_power_per_network")
-    suspend fun getSignalPowerPerNetwork(
-        @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String,
-        @Query("device_id") deviceId: String,
-        @Header("Authorization") token: String
-    ): Response<Map<String, Double>>
-
-    @GET("stats/sinr_per_network")
-    suspend fun getSinrPerNetwork(
-        @Query("start_date") startDate: String,
-        @Query("end_date") endDate: String,
-        @Query("device_id") deviceId: String,
-        @Header("Authorization") token: String
-    ): Response<Map<String, Double>>
 }

@@ -35,6 +35,7 @@ class SessionManager(private val context: Context) {
     }
 
     // ─── Authentication ─────────────────────────
+
     fun saveAuthToken(token: String) {
         prefs.edit().putString(USER_TOKEN, token).apply()
     }
