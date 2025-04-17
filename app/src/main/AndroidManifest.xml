@@ -37,7 +37,8 @@
         <activity
             android:name="com.example.loginapp.SignUpActivity"
             android:exported="false" />
-
+<activity android:name="com.example.loginapp.AboutAppActivity"
+    android:exported="false" />
         <activity
             android:name="com.example.loginapp.WelcomeActivity"
             android:exported="false" />
@@ -48,9 +49,10 @@
             android:theme="@style/Theme.LoginApp.NoActionBar" />
 
 <!-- infos -->
-        <activity
+       <!-- <activity
             android:name=".AboutAppActivity"
-            android:theme="@style/Theme.LoginApp.NoActionBar" />
+            android:theme="@style/Theme.LoginApp.NoActionBar" /> -->
+
         <activity
             android:name=".AboutLiveViewActivity"
             android:theme="@style/Theme.LoginApp.NoActionBar" />
@@ -61,13 +63,14 @@
             android:theme="@style/Theme.LoginApp.NoActionBar">
 
         </activity>
-
+<activity android:name="com.example.loginapp.HomeActivity"
+    android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
 
-    </application>
 
+    </application>
 </manifest>
 <!--
         <activity android:name=".MainActivity" android:exported="true">

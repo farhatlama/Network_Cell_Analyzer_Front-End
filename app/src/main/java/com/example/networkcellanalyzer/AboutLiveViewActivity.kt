@@ -71,6 +71,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
+import com.example.loginapp.AboutAppActivity
 import com.example.loginapp.HomeActivity
 import com.example.loginapp.LoginActivity
 import com.example.networkcellanalyzer.utils.SessionManager
@@ -95,7 +96,7 @@ class AboutLiveViewActivity : AppCompatActivity() {
 
         // Set up navigation components
         setupNavigationDrawer()
-        setupBottomNavigation()
+   //     setupBottomNavigation()
 
         // Handle close button click
         val closeIcon = findViewById<ImageView>(R.id.closeIcon)
@@ -158,7 +159,7 @@ class AboutLiveViewActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    private fun setupBottomNavigation() {
+  /*  private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         bottomNavigationView.selectedItemId = R.id.navigation_radio
 
@@ -179,7 +180,7 @@ class AboutLiveViewActivity : AppCompatActivity() {
             }
         }
     }
-
+*/
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
             return true

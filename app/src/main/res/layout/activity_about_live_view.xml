@@ -185,6 +185,7 @@
         </ScrollView>
 
         <!-- Fixed Bottom Navigation -->
+        <!-- Commented out in your original code
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottomNavigationView"
             android:layout_width="match_parent"
@@ -192,6 +193,7 @@
             android:background="#FFFFFF"
             android:elevation="8dp"
             app:menu="@menu/bottom_nav_menu" />
+        -->
     </LinearLayout>
 
     <!-- Navigation Drawer -->
