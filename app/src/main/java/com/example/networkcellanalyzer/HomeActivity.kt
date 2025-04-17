@@ -142,7 +142,6 @@ class HomeActivity : AppCompatActivity() {
 
         // Load initial data if connected
         if (NetworkUtil.isInternetAvailable(this)) {
-            loadDeviceData()
             startPeriodicRefresh()
         }
     }
@@ -219,8 +218,7 @@ class HomeActivity : AppCompatActivity() {
 
         // Simulate network request delay (1.5 seconds)
         handler.postDelayed({
-            // Fetch new data
-            loadDeviceData()
+
 
             // Hide the refresh overlay after update
             refreshOverlay.visibility = View.GONE
@@ -235,8 +233,7 @@ class HomeActivity : AppCompatActivity() {
             // Hide no connection view and show main content
             hideNoConnectionView()
 
-            // Load data if we just got connected
-            loadDeviceData()
+
             if (!::refreshOverlay.isInitialized || refreshOverlay.visibility != View.VISIBLE) {
                 startPeriodicRefresh()
             }
