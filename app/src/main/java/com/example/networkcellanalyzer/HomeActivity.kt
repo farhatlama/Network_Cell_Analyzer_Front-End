@@ -1,6 +1,8 @@
 package com.example.networkcellanalyzer
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -9,16 +11,15 @@ import androidx.appcompat.widget.Toolbar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import android.widget.ProgressBar
 import androidx.cardview.widget.CardView
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.networkcellanalyzer.databinding.ActivityHomeBinding
 
@@ -36,8 +37,6 @@ import com.example.networkcellanalyzer.utils.SessionManager
 import com.google.android.material.navigation.NavigationView
 import utils.DeviceInfoUtil
 import utils.NetworkUtil
-import java.io.IOException
-import java.util.*
 
 class HomeActivity : AppCompatActivity() {
 
@@ -51,7 +50,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var cellIdOutput: TextView
 
     //backend
-
     private lateinit var sessionManager: SessionManager
     private val networkData = NetworkData(
         deviceId = "unknown",
@@ -75,7 +73,7 @@ class HomeActivity : AppCompatActivity() {
 
     // for scheduling periodic refresh
     private val handler = Handler(Looper.getMainLooper())
-    private val refreshInterval = 10000L //refreshing every 10seconda
+    private val refreshInterval = 10000L //refreshing every 10seconds
     private var isRefreshScheduled = false
 
     // For Navigation Drawer
@@ -104,16 +102,11 @@ class HomeActivity : AppCompatActivity() {
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-
-
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         // Initialize the No Connection view
         setupNoConnectionView()
-
-
-
 
         // Initialize views
         deviceIdOutput = findViewById(R.id.deviceIdOutput)
@@ -132,7 +125,6 @@ class HomeActivity : AppCompatActivity() {
         // Hide the refresh overlay initially
         refreshOverlay.visibility = View.GONE
 
-
         setupNavigationDrawer()
 
         val helpIcon = findViewById<ImageView>(R.id.helpIcon)
@@ -142,24 +134,19 @@ class HomeActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-
-
         // Initial check for internet connection
         checkConnectionAndUpdateUI()
 
         // Set up periodic connectivity checks
         startPeriodicConnectivityChecks()
 
-        sessionManager = SessionManager(this)
         // Load initial data if connected
         if (NetworkUtil.isInternetAvailable(this)) {
             loadDeviceData()
             startPeriodicRefresh()
         }
-
-
-
     }
+
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
@@ -170,8 +157,7 @@ class HomeActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.navigation_radio -> {
                     // Instead of finish(), use this pattern:
-                   // startActivity(Intent(this, YourRadioActivity::class.java))
-                    // Don't call finish() here
+                    // startActivity(Intent(this, YourRadioActivity::class.java))
                     true
                 }
                 R.id.navigation_square -> {
@@ -180,12 +166,10 @@ class HomeActivity : AppCompatActivity() {
                 }
                 R.id.navigation_help -> {
                     startActivity(Intent(this, AboutAppActivity::class.java))
-                    // Don't call finish() here
                     true
                 }
                 else -> false
             }
-
         }
     }
 
@@ -213,11 +197,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
-
 
     private fun startPeriodicRefresh() {
         if (isRefreshScheduled) return // avoid rescheduling
@@ -296,6 +275,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun setupNavigationDrawer() {
         val sessionManager = SessionManager(this)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -304,7 +284,6 @@ class HomeActivity : AppCompatActivity() {
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
-
 
         val navView = findViewById<NavigationView>(R.id.nav_view)
         navView.setNavigationItemSelectedListener { item ->
@@ -345,157 +324,74 @@ class HomeActivity : AppCompatActivity() {
         dialog.setPositiveButton("OK") { _, _ -> }
         dialog.show()
     }
+
+    @RequiresPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
     private fun loadDeviceData() {
+        // Get data from DeviceInfoUtil and session
         val deviceId = sessionManager.getDeviceId() ?: DeviceInfoUtil.getDeviceId(this)
         val macAddress = sessionManager.getMacAddress() ?: DeviceInfoUtil.getMacAddress()
         val ipAddress = sessionManager.getIpAddress() ?: DeviceInfoUtil.getIPAddress()
+        val timestamp = DeviceInfoUtil.getCurrentTimestamp()
 
+        // Update basic device info UI
         deviceIdOutput.text = deviceId
         macAddressOutput.text = macAddress
-        timeStampOutput.text = getCurrentTimestamp()
+        timeStampOutput.text = timestamp
 
+        // Update network data object with basic info
         networkData.deviceId = deviceId
         networkData.macAddress = macAddress
-        networkData.timestamp = getCurrentTimestamp()
+        networkData.timestamp = timestamp
 
-        Log.d("DeviceInfo", "Device ID: $deviceId, MAC: $macAddress, IP: $ipAddress")
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-
-
-
-/*
-        if (!::sessionManager.isInitialized) {
-            sessionManager = SessionManager(this)
-        }
-
-        // Get device ID (use stored one or generate)
-        var deviceId = sessionManager.getDeviceId()
-        if (deviceId == null) {
-            deviceId = UUID.randomUUID().toString()
-            sessionManager.saveDeviceId(deviceId)
-        }
-
-        // Get MAC address or use a placeholder
-        val macAddress = getMacAddress() ?: "02:00:00:00:00:00"
-
-        // Update UI with stored values first
-        deviceIdOutput.text = deviceId
-        macAddressOutput.text = macAddress
-        timeStampOutput.text = getCurrentTimestamp()
-*/
-        // Try to fetch data from API
-        lifecycleScope.launch {
-            try {
-                // Get auth token
-                val token = sessionManager.getAuthToken() ?: return@launch
-
-                // Format dates for API
-                val endDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                    .format(Date())
-                val calendar = Calendar.getInstance()
-                calendar.add(Calendar.DAY_OF_MONTH, -1) // Last 24 hours
-                val startDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                    .format(calendar.time)
-
-                // Fetch operator stats
-                try {
-                    val operatorResponse = ApiClient.apiService.getOperatorStats(
-                        startDate, endDate, deviceId, "Bearer $token"
-                    )
-                    if (operatorResponse.isSuccessful && operatorResponse.body() != null) {
-                        // Get operator with highest percentage
-                        val operators = operatorResponse.body()!!
-                        val highestOperator = operators.entries
-                            .maxByOrNull { entry ->
-                                entry.value.removeSuffix("%").toDoubleOrNull() ?: 0.0
-                            }?.key
-
-                        highestOperator?.let {
-                            operatorOutput.text = it
-                            networkData.operator = it
-                        }
-                    }
-                } catch (e: Exception) {
-                    Log.e("API_ERROR", "Failed to fetch operator stats", e)
-
-                }
-
-                // Fetch signal power stats
-                try {
-                    val powerResponse = ApiClient.apiService.getSignalPowerPerNetwork(
-                        startDate, endDate, deviceId, "Bearer $token"
-                    )
-                    if (powerResponse.isSuccessful && powerResponse.body() != null) {
-                        // Use the strongest network type
-                        val networkPowers = powerResponse.body()!!
-
-                        // Find network with best signal
-                        val bestNetwork = networkPowers.entries
-                            .maxByOrNull { it.value }
-
-                        bestNetwork?.let {
-                            networkTypeOutput.text = it.key
-                            networkData.networkType = it.key
-                            networkData.signalPower = it.value
-
-
-                            // Update frequency band based on network type
-                            frequencyBandOutput.text = when(it.key) {
-                                "2G" -> "900/1800 MHz"
-                                "3G" -> "2100 MHz"
-                                "4G" -> "700/1800/2600 MHz"
-                                else -> "Unknown"
-
-                                // do not do that, connect it to the actual one
-                            }
-                            networkData.frequencyBand = frequencyBandOutput.text.toString()
-                        }
-
-                    }
-                } catch (e: Exception) {
-                    Log.e("API_ERROR", "Failed to fetch operator stats", e)
-
-                }
-
-                // Fetch SINR stats
-                try {
-                    val sinrResponse = ApiClient.apiService.getSinrPerNetwork(
-                        startDate, endDate, deviceId, "Bearer $token"
-                    )
-                    if (sinrResponse.isSuccessful && sinrResponse.body() != null) {
-                        val sinrValues = sinrResponse.body()!!
-
-                        // Get SINR for current network type
-                        val currentSinr = sinrValues[networkData.networkType] ?: 0.0
-                        sinrOutput.text = String.format("%.1f dB", currentSinr)
-                        networkData.sinr = currentSinr
-                    }
-                } catch (e: Exception) {
-                    Log.e("API_ERROR", "Failed to fetch operator stats", e)
-
-                }
-
-                // Generate a cell ID if not already set
-           /*     if (networkData.cellId == "unknown") {
-                    val cellIdBase = 12349800
-                    val cellIdRandom = cellIdBase + Random.nextInt(200)
-                    cellIdOutput.text = cellIdRandom.toString()
-                    networkData.cellId = cellIdRandom.toString()
-                } else {
-                 */   cellIdOutput.text = networkData.cellId
-
-
-                // Submit the current reading to the backend
-                submitNetworkData()
-
-            } catch (e: IOException) {
-                Log.e("API_ERROR", "Failed to fetch operator stats", e)
-
+            // Get cell ID using DeviceInfoUtil
+            val cellId = DeviceInfoUtil.getCellId(this)
+            if (cellId != -1) {
+                cellIdOutput.text = cellId.toString()
+                networkData.cellId = cellId.toString()
+            } else {
+                cellIdOutput.text = "Unknown"
+                networkData.cellId = "Unknown"
             }
+
+            // Get operator name
+            val operatorName = DeviceInfoUtil.getOperatorName(this)
+            operatorOutput.text = operatorName
+            networkData.operator = operatorName
+
+            // Get network type
+            val networkType = DeviceInfoUtil.getNetworkType(this)
+            networkTypeOutput.text = networkType
+            networkData.networkType = networkType
+
+            // Get frequency band (now properly extracted from device)
+            val frequencyBand = DeviceInfoUtil.getFrequencyBand(this)
+            frequencyBandOutput.text = frequencyBand
+            networkData.frequencyBand = frequencyBand
+
+            // Get signal metrics
+            val (sinr, signalStrength) = DeviceInfoUtil.getSignalMetrics(this)
+            sinrOutput.text = String.format("%.1f dB", sinr)
+            networkData.sinr = sinr
+            networkData.signalPower = signalStrength
+
+            // Log device info
+            Log.d("DeviceInfo", "Device ID: $deviceId, MAC: $macAddress, IP: $ipAddress")
+
+        } else {
+            // Handle permission not granted
+            cellIdOutput.text = "Permission required"
+            operatorOutput.text = "Permission required"
+            networkTypeOutput.text = "Unknown"
+            frequencyBandOutput.text = "Unknown"
+            sinrOutput.text = "N/A"
         }
+
+        // Submit the collected data to backend
+        submitNetworkData()
     }
-
-
 
     private fun submitNetworkData() {
         lifecycleScope.launch {
@@ -510,7 +406,7 @@ class HomeActivity : AppCompatActivity() {
                     network_type = networkData.networkType,
                     frequency_band = networkData.frequencyBand,
                     cell_id = networkData.cellId,
-                    timestamp = SimpleDateFormat("dd MMM yyyy hh:mm a", Locale.US).format(Date()),
+                    timestamp = DeviceInfoUtil.getFormattedTimestampForApi(),
                     device_mac = networkData.macAddress,
                     device_id = networkData.deviceId
                 )
@@ -522,11 +418,6 @@ class HomeActivity : AppCompatActivity() {
                 // Silent fail - we don't need to show errors for background submissions
             }
         }
-    }
-    private fun getCurrentTimestamp(): String {
-        val now = Date()
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return formatter.format(now)
     }
 
     override fun onPause() {
@@ -542,23 +433,3 @@ class HomeActivity : AppCompatActivity() {
         checkConnectionAndUpdateUI()
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
