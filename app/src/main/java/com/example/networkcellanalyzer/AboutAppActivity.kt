@@ -34,7 +34,8 @@ class AboutAppActivity : AppCompatActivity() {
 
         // Setup Drawer and Navigation
         setupNavigationDrawer()
-      //  setupBottomNavigation()
+
+        //  setupBottomNavigation()
 
         // Handle close button click
         val closeIcon = findViewById<ImageView>(R.id.closeIcon)
@@ -43,30 +44,7 @@ class AboutAppActivity : AppCompatActivity() {
         }
     }
 
-   /* private fun setupBottomNavigation() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView?.let {
-            it.selectedItemId = R.id.navigation_help
 
-            it.setOnItemSelectedListener { item ->
-                when (item.itemId) {
-                    R.id.navigation_radio -> {
-                        // Navigate without finish()
-
-                        true
-                    }
-                    R.id.navigation_square -> {
-                        startActivity(Intent(this, HomeActivity::class.java))
-                        // Don't call finish() here
-                        true
-                    }
-                    R.id.navigation_help -> true // Already here
-                    else -> false
-                }
-            }
-        }
-    }
-*/
     private fun setupNavigationDrawer() {
         val sessionManager = SessionManager(this)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -93,7 +71,7 @@ class AboutAppActivity : AppCompatActivity() {
 
                 R.id.nav_logout -> {
                     // Handle Log out action (log the user out and go to login screen)
-                    sessionManager.clearSession() // Clear session data
+                    sessionManager.clearSession() // Clears session data
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
                     finish() // Finish current activity (go back to login)

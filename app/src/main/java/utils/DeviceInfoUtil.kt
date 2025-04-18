@@ -215,9 +215,9 @@ object DeviceInfoUtil {
 
     // Get current timestamp
     fun getCurrentTimestamp(): String {
-        val now = Date()
+        val now = System.currentTimeMillis()
         val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        return formatter.format(now)
+        return formatter.format(Date(now)) // Format the current time
     }
 
     // Get signal metrics (SINR and signal power)

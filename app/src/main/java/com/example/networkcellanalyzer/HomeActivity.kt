@@ -1,7 +1,6 @@
 package com.example.networkcellanalyzer
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -54,7 +53,6 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var frequencyBandOutput: TextView
     private lateinit var cellIdOutput: TextView
 
-    //backend
     private lateinit var sessionManager: SessionManager
     private val networkData = NetworkData(
         deviceId = "unknown",
@@ -72,23 +70,18 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var refreshOverlay: CardView
     private lateinit var refreshProgress: ProgressBar
 
-    //to check for internet connection
-    private lateinit var binding: ActivityHomeBinding
-    private lateinit var noConnectionView: View
-
     // for scheduling periodic refresh
     private val handler = Handler(Looper.getMainLooper())
     private val refreshInterval = 10000L //refreshing every 10seconds
     private var isRefreshScheduled = false
 
+    //to check for internet connection
+    private lateinit var binding: ActivityHomeBinding
+    private lateinit var noConnectionView: View
+
     // For Navigation Drawer
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
-
-
-
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -139,7 +132,6 @@ class HomeActivity : AppCompatActivity() {
 
         setupNavigationDrawer()
 
-
         // Start the periodic update of the timestamp
         startUpdatingTimestamp()
 
@@ -150,7 +142,6 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, AboutLiveViewActivity::class.java)
             startActivity(intent)
         }
-
 
         // Initial check for internet connection
         checkConnectionAndUpdateUI()
@@ -163,8 +154,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
 
-
-private fun startUpdatingTimestamp() {
+private fun startUpdatingTimestamp() { //this is to make sure that the timestamp is live
     val updateTimestampRunnable = object : Runnable {
         override fun run() {
             // Get current timestamp
@@ -182,7 +172,7 @@ private fun startUpdatingTimestamp() {
 }
 
 
-private fun checkAndRequestPermissions() {
+private fun checkAndRequestPermissions() { //requesting permissions from the user
         val locationPermission = ActivityCompat.checkSelfPermission(
             this,
             Manifest.permission.ACCESS_FINE_LOCATION
@@ -196,6 +186,7 @@ private fun checkAndRequestPermissions() {
         if (locationPermission == PackageManager.PERMISSION_GRANTED &&
             phoneStatePermission == PackageManager.PERMISSION_GRANTED) {
             loadDeviceData()
+            startUpdatingTimestamp()
             return
         }
 
@@ -218,85 +209,6 @@ private fun checkAndRequestPermissions() {
         )
     }
 
-  /*      val fineLocationPermission = ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        val phoneStatePermission = ActivityCompat.checkSelfPermission(
-            this,
-            Manifest.permission.READ_PHONE_STATE
-        )
-        when {
-            // Both permissions granted
-            fineLocationPermission == PackageManager.PERMISSION_GRANTED &&
-                    phoneStatePermission == PackageManager.PERMISSION_GRANTED -> {
-                loadDeviceData()
-            }
-
-            // Should show rationale for any permission
-            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
-                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE) -> {
-                // Show dialog explaining why permissions are needed before requesting
-                AlertDialog.Builder(this)
-                    .setTitle("Permissions Required")
-                    .setMessage("Location and Phone permissions are required to access network information.")
-                    .setPositiveButton("OK") { _, _ ->
-                        // Request permissions
-                        ActivityCompat.requestPermissions(
-                            this,
-                            arrayOf(
-                                Manifest.permission.ACCESS_FINE_LOCATION,
-                                Manifest.permission.READ_PHONE_STATE
-                            ),
-                            REQUEST_PERMISSIONS
-                        )
-                    }
-                    .setNegativeButton("Cancel") { _, _ ->
-                        // Handle limited functionality
-                        showLimitedFunctionality()
-                    }
-                    .show()
-            }
-
-            // User previously denied with "Don't ask again"
-            else -> {
-                // Direct user to app settings
-                AlertDialog.Builder(this)
-                    .setTitle("Permissions Required")
-                    .setMessage("Permissions are required but have been permanently denied. Please enable them in app settings.")
-                    .setPositiveButton("Go to Settings") { _, _ ->
-                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                        val uri = Uri.fromParts("package", packageName, null)
-                        intent.data = uri
-                        startActivityForResult(intent, SETTINGS_REQUEST_CODE)
-                    }
-                    .setNegativeButton("Cancel") { _, _ ->
-                        // Handle limited functionality
-                        showLimitedFunctionality()
-                    }
-                    .show()
-            }
-        }
-    }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == SETTINGS_REQUEST_CODE) {
-            // Check permissions again after returning from settings
-            checkAndRequestPermissions()
-        }
-        }
-    private fun showLimitedFunctionality() {
-        Toast.makeText(
-            this,
-            "Limited functionality due to missing permissions.",
-            Toast.LENGTH_LONG
-        ).show()
-
-        // Show whatever data is available without permissions
-        deviceIdOutput.text = DeviceInfoUtil.getDeviceId(this)
-        macAddressOutput.text = DeviceInfoUtil.getMacAddress()
-    }
-*/
     // Handle permission result in one place
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -306,13 +218,16 @@ private fun checkAndRequestPermissions() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                // Permissions granted, load device data
+                // Permissions granted, load device data and continue the live time
                 loadDeviceData()
+                startUpdatingTimestamp()
             } else {
+                startUpdatingTimestamp()
                 // Load basic data without permissions
                 val deviceId = sessionManager.getDeviceId() ?: DeviceInfoUtil.getDeviceId(this)
                 val macAddress = sessionManager.getMacAddress() ?: DeviceInfoUtil.getMacAddress()
                 val timestamp = DeviceInfoUtil.getCurrentTimestamp()
+
                 cellIdOutput.text = "Permission required"
                 operatorOutput.text = "Permission required"
                 networkTypeOutput.text = "Permission required"
@@ -348,19 +263,6 @@ private fun checkAndRequestPermissions() {
 
 
 
-
-            /*{
-                // Permissions denied, show message
-                Toast.makeText(
-                    this,
-                    "Permissions are required to access network information.",
-                    Toast.LENGTH_LONG
-                ).show()
-                // You can show limited information or handle gracefully
-                deviceIdOutput.text = DeviceInfoUtil.getDeviceId(this)
-                macAddressOutput.text = DeviceInfoUtil.getMacAddress()
-            }
-            */
         }
     }
 
@@ -373,8 +275,11 @@ private fun checkAndRequestPermissions() {
                 PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) ==
                 PackageManager.PERMISSION_GRANTED) {
+                startUpdatingTimestamp()
                 loadDeviceData()
             } else {
+                showSettingsDialog()
+
                 // Still not granted
                 deviceIdOutput.text = DeviceInfoUtil.getDeviceId(this)
                 macAddressOutput.text = DeviceInfoUtil.getMacAddress()
@@ -433,10 +338,10 @@ private fun checkAndRequestPermissions() {
 
 
     private fun setupNoConnectionView() {
-        // Inflate the no connection view
+        // show no connection
         noConnectionView = layoutInflater.inflate(R.layout.layout_no_connection, null)
 
-        // Set up retry button click listener
+        // retry button
         noConnectionView.findViewById<View>(R.id.buttonRetry).setOnClickListener {
             checkConnectionAndUpdateUI()
         }
@@ -458,7 +363,7 @@ private fun checkAndRequestPermissions() {
     }
 
     private fun startPeriodicRefresh() {
-        if (isRefreshScheduled) return // avoid rescheduling
+        if (isRefreshScheduled) return // to not reschedule
         isRefreshScheduled = true
         // Schedule the refresh task
         handler.postDelayed(object : Runnable {
@@ -473,14 +378,11 @@ private fun checkAndRequestPermissions() {
     }
 
     private fun refreshData() {
-        // Show the refresh overlay
+        // Show the refresh
         refreshOverlay.visibility = View.VISIBLE
 
-        // Simulate network request delay (1.5 seconds)
         handler.postDelayed({
-
-
-            // Hide the refresh overlay after update
+             // remove refresh
             refreshOverlay.visibility = View.GONE
         }, 1500)
     }
@@ -488,16 +390,23 @@ private fun checkAndRequestPermissions() {
     private fun checkConnectionAndUpdateUI() {
         if (!NetworkUtil.isInternetAvailable(this)) {
             // Show no connection view
+            stopPeriodicRefresh()
             showNoConnectionView()
         } else {
             // Hide no connection view and show main content
+            startUpdatingTimestamp()
             hideNoConnectionView()
-
 
             if (!::refreshOverlay.isInitialized || refreshOverlay.visibility != View.VISIBLE) {
                 startPeriodicRefresh()
             }
         }
+    }
+
+    private fun stopPeriodicRefresh() {
+        // Stop periodic refresh
+        handler.removeCallbacksAndMessages(null)
+        isRefreshScheduled = false
     }
 
     private fun showNoConnectionView() {
@@ -515,7 +424,7 @@ private fun checkAndRequestPermissions() {
     }
 
     private fun hideNoConnectionView() {
-        // Remove the no connection view if it's added
+        // Remove the no connection view if added
         if (noConnectionView.parent != null) {
             (binding.root as ViewGroup).removeView(noConnectionView)
         }
@@ -527,7 +436,7 @@ private fun checkAndRequestPermissions() {
     private fun startPeriodicConnectivityChecks() {
         lifecycleScope.launch {
             while (true) {
-                delay(5000) // Check every 5 seconds
+                delay(5000) // Checks every 5 seconds
                 checkConnectionAndUpdateUI()
             }
         }
@@ -535,6 +444,7 @@ private fun checkAndRequestPermissions() {
 
     private fun setupNavigationDrawer() {
         val sessionManager = SessionManager(this)
+        // setting up the navigation drawer
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar,
@@ -554,11 +464,11 @@ private fun checkAndRequestPermissions() {
                 }
 
                 R.id.nav_logout -> {
-                    // Handle Log out action (log the user out and go to login screen)
-                    sessionManager.clearSession() // Clear session data
+                    // Handle Log out action (logs the user out and goes to login screen)
+                    sessionManager.clearSession() // Clearing session data
                     val intent = Intent(this, LoginActivity::class.java)
                     startActivity(intent)
-                    finish() // Finish current activity (go back to login)
+                    finish() // goes back to login
                     drawerLayout.closeDrawers()
                     true
                 }
@@ -581,17 +491,6 @@ private fun checkAndRequestPermissions() {
         dialog.setPositiveButton("OK") { _, _ -> }
         dialog.show()
     }
-
-    private val LOCATION_PERMISSION_REQUEST_CODE = 1001
-
-    private fun requestLocationPermission() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-            LOCATION_PERMISSION_REQUEST_CODE
-        )
-    }
-
 
 
     private fun loadDeviceData() {
@@ -640,7 +539,7 @@ private fun checkAndRequestPermissions() {
             networkTypeOutput.text = networkType
             networkData.networkType = networkType
 
-            // Get frequency band (now properly extracted from device)
+            // Get frequency band
             val frequencyBand = DeviceInfoUtil.getFrequencyBand(this)
             frequencyBandOutput.text = frequencyBand
             networkData.frequencyBand = frequencyBand
@@ -689,7 +588,7 @@ private fun checkAndRequestPermissions() {
                 ApiClient.apiService.submitNetworkData(submission, "Bearer $token")
 
             } catch (e: Exception) {
-                // Silent fail - we don't need to show errors for background submissions
+
             }
         }
     }
@@ -697,7 +596,6 @@ private fun checkAndRequestPermissions() {
 
     override fun onPause() {
         super.onPause()
-        // Remove callbacks to prevent memory leaks
         handler.removeCallbacksAndMessages(null)
         isRefreshScheduled = false
     }
