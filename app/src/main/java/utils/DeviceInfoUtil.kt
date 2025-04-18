@@ -24,7 +24,9 @@ object DeviceInfoUtil {
 
     // Secure device ID
     fun getDeviceId(context: Context): String {
-        return Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        val id = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        Log.d("DeviceInfoUtil", "Device ID: $id")
+        return id
     }
 
     // MAC Address (will be dummy on Android 10+)
@@ -70,6 +72,7 @@ object DeviceInfoUtil {
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             val cellInfoList = telephonyManager.allCellInfo
             val cellInfo: CellInfo? = cellInfoList?.firstOrNull()
+    Log.d("DeviceInfoUtil", "Cell info list size: ${cellInfoList?.size ?: 0}")
 
             return when (cellInfo) {
                 is CellInfoLte -> cellInfo.cellIdentity.ci
@@ -102,7 +105,7 @@ object DeviceInfoUtil {
     }
 
     // Get network type
-    @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE])
     fun getNetworkType(context: Context): String {
         try {
             val telephonyManager = context.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
