@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
@@ -14,24 +15,21 @@ import android.widget.ProgressBar
 import androidx.cardview.widget.CardView
 import android.os.Handler
 import android.os.Looper
-import android.telephony.TelephonyManager
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresPermission
 import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
+import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.networkcellanalyzer.databinding.ActivityHomeBinding
-
 import androidx.lifecycle.lifecycleScope
 import com.example.loginapp.AboutAppActivity
 import com.example.loginapp.LoginActivity
-
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-
 import utils.ApiClient
 import com.example.networkcellanalyzer.model.CellRecordSubmission
 import com.example.networkcellanalyzer.model.NetworkData
@@ -41,6 +39,10 @@ import utils.DeviceInfoUtil
 import utils.NetworkUtil
 
 class HomeActivity : AppCompatActivity() {
+    companion object {
+        private const val REQUEST_PERMISSIONS = 1001
+        private const val SETTINGS_REQUEST_CODE = 102
+    }
 
     private lateinit var deviceIdOutput: TextView
     private lateinit var macAddressOutput: TextView
@@ -81,7 +83,6 @@ class HomeActivity : AppCompatActivity() {
     // For Navigation Drawer
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var toggle: ActionBarDrawerToggle
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -131,12 +132,14 @@ class HomeActivity : AppCompatActivity() {
 
         setupNavigationDrawer()
 
+
         val helpIcon = findViewById<ImageView>(R.id.helpIcon)
         helpIcon.setOnClickListener {
             // Navigate to About Live View screen when clicking the top-right ? button
             val intent = Intent(this, AboutLiveViewActivity::class.java)
             startActivity(intent)
         }
+
 
         // Initial check for internet connection
         checkConnectionAndUpdateUI()
@@ -146,60 +149,116 @@ class HomeActivity : AppCompatActivity() {
 
         checkAndRequestPermissions()
 
-        // Load initial data if connected
-        if (NetworkUtil.isInternetAvailable(this)) {
-            startPeriodicRefresh()
-        }
-
     }
 
-    val PERMISSION_REQUEST_CODE = 1001
     private fun checkAndRequestPermissions() {
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ||
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+        val fineLocationPermission = ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+        val phoneStatePermission = ActivityCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_PHONE_STATE
+        )
+        when {
+            // Both permissions granted
+            fineLocationPermission == PackageManager.PERMISSION_GRANTED &&
+                    phoneStatePermission == PackageManager.PERMISSION_GRANTED -> {
+                loadDeviceData()
+            }
 
-            // Permissions not granted, request them
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE),
-                PERMISSION_REQUEST_CODE
-            )
+            // Should show rationale for any permission
+            ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) ||
+                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE) -> {
+                // Show dialog explaining why permissions are needed before requesting
+                AlertDialog.Builder(this)
+                    .setTitle("Permissions Required")
+                    .setMessage("Location and Phone permissions are required to access network information.")
+                    .setPositiveButton("OK") { _, _ ->
+                        // Request permissions
+                        ActivityCompat.requestPermissions(
+                            this,
+                            arrayOf(
+                                Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.READ_PHONE_STATE
+                            ),
+                            REQUEST_PERMISSIONS
+                        )
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        // Handle limited functionality
+                        showLimitedFunctionality()
+                    }
+                    .show()
+            }
 
-            // Show message explaining why permissions are needed again
-            Toast.makeText(this, "Permissions needed to display network information", Toast.LENGTH_SHORT).show()
-        } else {
-            // Permissions already granted, load data
-            loadDeviceData()
+            // User previously denied with "Don't ask again"
+            else -> {
+                // Direct user to app settings
+                AlertDialog.Builder(this)
+                    .setTitle("Permissions Required")
+                    .setMessage("Permissions are required but have been permanently denied. Please enable them in app settings.")
+                    .setPositiveButton("Go to Settings") { _, _ ->
+                        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                        val uri = Uri.fromParts("package", packageName, null)
+                        intent.data = uri
+                        startActivityForResult(intent, SETTINGS_REQUEST_CODE)
+                    }
+                    .setNegativeButton("Cancel") { _, _ ->
+                        // Handle limited functionality
+                        showLimitedFunctionality()
+                    }
+                    .show()
+            }
         }
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == SETTINGS_REQUEST_CODE) {
+            // Check permissions again after returning from settings
+            checkAndRequestPermissions()
+        }
+        }
+    private fun showLimitedFunctionality() {
+        Toast.makeText(
+            this,
+            "Limited functionality due to missing permissions.",
+            Toast.LENGTH_LONG
+        ).show()
 
+        // Show whatever data is available without permissions
+        deviceIdOutput.text = DeviceInfoUtil.getDeviceId(this)
+        macAddressOutput.text = DeviceInfoUtil.getMacAddress()
+    }
+
+    // Handle permission result in one place
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CODE) {
+        if (requestCode == REQUEST_PERMISSIONS) {
             if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                // Permissions were granted, load data
+                // Permissions granted, load device data
                 loadDeviceData()
             } else {
-                // Permissions denied
-                Toast.makeText(this, "Cannot display network information without permissions", Toast.LENGTH_LONG).show()
-
-                // Show limited information
+                // Permissions denied, show message
+                Toast.makeText(
+                    this,
+                    "Permissions are required to access network information.",
+                    Toast.LENGTH_LONG
+                ).show()
+                // You can show limited information or handle gracefully
                 deviceIdOutput.text = DeviceInfoUtil.getDeviceId(this)
                 macAddressOutput.text = DeviceInfoUtil.getMacAddress()
-                timeStampOutput.text = DeviceInfoUtil.getCurrentTimestamp()
-
-                // Show placeholder for permission-required data
-                cellIdOutput.text = "Permission required"
-                operatorOutput.text = "Permission required"
-                // etc.
             }
         }
     }
+
+
+
     private fun setupBottomNavigation() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
@@ -213,18 +272,22 @@ class HomeActivity : AppCompatActivity() {
                     // startActivity(Intent(this, YourRadioActivity::class.java))
                     true
                 }
+
                 R.id.navigation_square -> {
                     // Already on this page, do nothing
                     true
                 }
+
                 R.id.navigation_help -> {
                     startActivity(Intent(this, AboutAppActivity::class.java))
                     true
                 }
+
                 else -> false
             }
         }
     }
+
 
     private fun setupNoConnectionView() {
         // Inflate the no connection view
@@ -386,23 +449,8 @@ class HomeActivity : AppCompatActivity() {
         )
     }
 
-    /*@RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                loadDeviceData()
-            } else {
-                // Permission denied - handle this case
-                Toast.makeText(this, "Location permission required for network data collection", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
-    @RequiresPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) */
+
+
     private fun loadDeviceData() {
         // Get data from DeviceInfoUtil and session
         val deviceId = sessionManager.getDeviceId() ?: DeviceInfoUtil.getDeviceId(this)
@@ -420,39 +468,21 @@ class HomeActivity : AppCompatActivity() {
         networkData.macAddress = macAddress
         networkData.timestamp = timestamp
 
-        // In loadDeviceData()
-        try {
-            val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
 
-            // Check if telephony features are available
-            if (packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
-                Log.d("Device", "Telephony features available")
-            } else {
-                Log.e("Device", "No telephony features on this device!")
-            }
-
-            // Check if we can access cell info
-            val cellInfoList = telephonyManager.allCellInfo
-            if (cellInfoList == null || cellInfoList.isEmpty()) {
-                Log.e("Device", "No cell info available!")
-            } else {
-                Log.d("Device", "Cell info available: ${cellInfoList.size} items")
-            }
-        } catch (e: Exception) {
-            Log.e("Device", "Error accessing telephony service", e)
-        }
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
             // Get cell ID using DeviceInfoUtil
             val cellId = DeviceInfoUtil.getCellId(this)
+
             if (cellId != -1) {
                 cellIdOutput.text = cellId.toString()
                 networkData.cellId = cellId.toString()
             } else {
-                cellIdOutput.text = "Unknown"
-                networkData.cellId = "Unknown"
+                cellIdOutput.text = "Permission required"
+                networkData.cellId = "Permission required"
             }
+
 
             // Get operator name
             val operatorName = DeviceInfoUtil.getOperatorName(this)
@@ -482,8 +512,8 @@ class HomeActivity : AppCompatActivity() {
             // Handle permission not granted
             cellIdOutput.text = "Permission required"
             operatorOutput.text = "Permission required"
-            networkTypeOutput.text = "Unknown"
-            frequencyBandOutput.text = "Unknown"
+            networkTypeOutput.text = "Permission required"
+            frequencyBandOutput.text = "Permission required"
             sinrOutput.text = "N/A"
         }
 
@@ -517,6 +547,7 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onPause() {
         super.onPause()

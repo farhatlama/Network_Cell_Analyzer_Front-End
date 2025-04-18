@@ -58,7 +58,8 @@ class LoginActivity : AppCompatActivity() {
             val password = editTextPassword.text.toString().trim()
 
             if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 // Call API for login
                 loginUser(username, password)
@@ -111,17 +112,26 @@ class LoginActivity : AppCompatActivity() {
                         assignRealCellId()
                     }
 
-                    Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@LoginActivity, "Login successful!", Toast.LENGTH_SHORT)
+                        .show()
                     navigateToWelcome()
                 } else {
                     // For development - also handle testuser/1234 locally
                     if (username == "testuser" && password == "1234") {
                         sessionManager.saveUsername(username)
                         sessionManager.saveAuthToken("dummy-token-for-testing")
-                        Toast.makeText(this@LoginActivity, "Login successful (test mode)!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Login successful (test mode)!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         navigateToWelcome()
                     } else {
-                        Toast.makeText(this@LoginActivity, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@LoginActivity,
+                            "Invalid credentials",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             } catch (e: IOException) {
@@ -129,10 +139,18 @@ class LoginActivity : AppCompatActivity() {
                 if (username == "testuser" && password == "1234") {
                     sessionManager.saveUsername(username)
                     sessionManager.saveAuthToken("dummy-token-for-testing")
-                    Toast.makeText(this@LoginActivity, "Login successful (offline mode)!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Login successful (offline mode)!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                     navigateToWelcome()
                 } else {
-                    Toast.makeText(this@LoginActivity, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@LoginActivity,
+                        "Network error: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -143,19 +161,29 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
         finish()
     }
+
     private fun assignRealCellId() {
         if (
-            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_STATE
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             val realCellId = DeviceInfoUtil.getCellId(this)
             sessionManager.saveCellId(realCellId.toString())
         } else {
-            Toast.makeText(this, "Permission denied: Cannot access Cell ID", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Permission denied: Cannot access Cell ID", Toast.LENGTH_SHORT)
+                .show()
         }
     }
+}
 
-    override fun onRequestPermissionsResult(
+   //what if instead i request it only in the homeactivity
+    /*override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
@@ -188,7 +216,7 @@ class LoginActivity : AppCompatActivity() {
                 .show()
     }
     }
-
+*/
 
 /*package com.example.loginapp
 
