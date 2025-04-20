@@ -15,25 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import com.example.loginapp.LoginActivity
 
-
-/*class MainActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        enableEdgeToEdge()
-        setContent {
-            NetworkCellAnalyzerTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
-        }
-    } */
-
-
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(

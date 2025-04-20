@@ -189,13 +189,6 @@
                     android:textSize="16sp"
                     android:paddingBottom="8dp" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="5. Enable notifications for real-time alerts about network changes"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
-
             </LinearLayout>
         </ScrollView>
 
