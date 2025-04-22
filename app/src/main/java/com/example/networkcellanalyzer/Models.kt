@@ -1,3 +1,4 @@
+// app/src/main/java/com/example/networkcellanalyzer/model/Models.kt
 package com.example.networkcellanalyzer.model
 
 data class LoginRequest(
